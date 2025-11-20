@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -14,10 +15,8 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 from sklearn.decomposition import PCA
 
 
-
 ## 首先完成数据的读取和加载
 def load_and_explore_data():
-    
     print("="*50)   
     print("1. Data Loading and Exploratory Analysis")
     print("="*50)
@@ -29,7 +28,6 @@ def load_and_explore_data():
     df = pd.DataFrame(data=iris.data, columns=iris.feature_names)
     df['target'] = iris.target
     df['target_names'] = df['target'].map({i: name for i, name in enumerate(iris.target_names)})  
-	
     
     print(f"Dataset shape: {df.shape}")
     print("\nFirst 5 rows of the dataset:")
@@ -49,6 +47,12 @@ def visualize_data(df, iris):
     print("\n" + "="*50)
     print("2. Data Visualization")
     print("="*50)
+    
+    # Ensure the directory exists（创建同级目录）
+    output_dir = './iris_fit_history_plot_show'  # 同级目录：./ 表示当前py文件所在目录
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+        print(f"Created directory: {output_dir}")
     
     # Set plot style
     sns.set(style="whitegrid")
@@ -72,22 +76,25 @@ def visualize_data(df, iris):
     plt.title('Petal Width Distribution')
     
     plt.tight_layout()
-    plt.savefig('boxplots.png')
-    plt.show()
+    # 关键修改1：保存路径改为同级目录（去掉 ../）
+    plt.savefig('./iris_fit_history_plot_show/boxplots.png')
+    plt.close()  # 关闭图形，释放内存（避免多个图叠加）
     
     # 2. Pair plot of features
     plt.figure(figsize=(10, 8))
     sns.pairplot(df, hue='target_names', vars=iris.feature_names)
-    plt.savefig('pairplot.png')
-    plt.show()
+    # 关键修改2：保存路径改为同级目录
+    plt.savefig('./iris_fit_history_plot_show/pairplot.png')
+    plt.close()
     
     # 3. Correlation heatmap
     plt.figure(figsize=(8, 6))
     correlation_matrix = df[iris.feature_names].corr()
     sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=0.5)
     plt.title('Feature Correlation Heatmap')
-    plt.savefig('correlation_heatmap.png')
-    plt.show()
+    # 关键修改3：保存路径改为同级目录
+    plt.savefig('./iris_fit_history_plot_show/correlation_heatmap.png')
+    plt.close()
     
     # 4. Feature distribution histograms
     plt.figure(figsize=(12, 8))
@@ -97,8 +104,9 @@ def visualize_data(df, iris):
         plt.title(f'{feature} Distribution')
     
     plt.tight_layout()
-    plt.savefig('histograms.png')
-    plt.show()
+    # 关键修改4：保存路径改为同级目录
+    plt.savefig('./iris_fit_history_plot_show/histograms.png')
+    plt.close()
 
 
 def train_models(X_train, X_test, y_train, y_test):
@@ -153,6 +161,12 @@ def visualize_results(results, X_test, y_test, iris):
     print("4. Result Visualization")
     print("="*50)
     
+    # Ensure the directory exists（再次确认目录存在，避免异常）
+    output_dir = './iris_fit_history_plot_show'
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+        print(f"Created directory: {output_dir}")
+    
     # 1. Accuracy comparison
     plt.figure(figsize=(10, 6))
     model_names = list(results.keys())
@@ -167,8 +181,9 @@ def visualize_results(results, X_test, y_test, iris):
     for i, acc in enumerate(accuracies):
         plt.text(i, acc + 0.01, f'{acc:.4f}', ha='center')
     
-    plt.savefig('model_accuracy_comparison.png')
-    plt.show()
+    # 关键修改5：保存路径改为同级目录
+    plt.savefig('./iris_fit_history_plot_show/model_accuracy_comparison.png')
+    plt.close()
     
     # 2. PCA dimensionality reduction visualization of test set
     # Standardize the test set
@@ -185,8 +200,9 @@ def visualize_results(results, X_test, y_test, iris):
     plt.title('Test Set Distribution after PCA Dimensionality Reduction')
     plt.xlabel('Principal Component 1')
     plt.ylabel('Principal Component 2')
-    plt.savefig('pca_test_set.png')
-    plt.show()
+    # 关键修改6：保存路径改为同级目录
+    plt.savefig('./iris_fit_history_plot_show/pca_test_set.png')
+    plt.close()
     
     # 3. Confusion matrix heatmaps
     plt.figure(figsize=(15, 10))
@@ -199,8 +215,9 @@ def visualize_results(results, X_test, y_test, iris):
         plt.ylabel('Actual Class')
     
     plt.tight_layout()
-    plt.savefig('confusion_matrices.png')
-    plt.show()
+    # 关键修改7：保存路径改为同级目录
+    plt.savefig('./iris_fit_history_plot_show/confusion_matrices.png')
+    plt.close()
 
 
 def main():
@@ -235,7 +252,7 @@ def main():
     
     print("\n" + "="*50)
     print("Analysis completed!")
-    print("Generated visualization files:")
+    print("Generated visualization files in ./iris_fit_history_plot_show/:")
     print("- boxplots.png: Feature box plots")
     print("- pairplot.png: Feature pair plots")
     print("- correlation_heatmap.png: Feature correlation heatmap")
